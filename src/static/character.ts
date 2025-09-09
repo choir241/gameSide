@@ -200,41 +200,41 @@ const skills = [
   },
 ];
 
-const statDescriptions = [
-  {
+const statDescriptions = {
+  atk: {
     name: "Attack",
     key: "atk",
     description:
       "Determines how much damage a character does, reduced by the opponent's defense stat.",
   },
-  {
+  spd: {
     name: "Speed",
     key: "spd",
     description:
       "Determines turn order; higher speed means acting earlier in a turn.",
   },
-  {
+  magicAtk: {
     name: "Magic Attack",
     key: "magicAtk",
     description:
       "Determines how much magic damage a character does, reduced by the opponent's magic defense.",
   },
-  {
+  def: {
     name: "Defense",
     key: "def",
     description: "Reduces incoming physical damage.",
   },
-  {
+  magicDef: {
     name: "Magic Defense",
     key: "magicDef",
     description: "Reduces incoming magic damage.",
   },
-  {
+  health: {
     name: "Health",
     key: "health",
     description: "If this hits 0, the character can no longer act in battle.",
   },
-];
+};
 
 function randomizeStat(min:number, max:number){
  return Math.round(Math.random() * (max - min) + min);
@@ -249,6 +249,7 @@ const baseStats = {
   def: randomizeStat(80, 100),
   magicDef: randomizeStat(80, 100),
   health: randomizeStat(800, 1000),
+  mana: randomizeStat(80, 100)
 };
 
 const perLevelGrowth = {

@@ -1,3 +1,5 @@
+import { character } from "@/static/character";
+
 interface ICharacterStats {
   atk: number;
   spd: number;
@@ -17,13 +19,13 @@ export default function CharacterTable({
   return (
     <table>
       <thead>
-        <tr className={`text-white ${bgColor}`}>
-          <td>Health</td>
-          <td>Atk</td>
-          <td>Def</td>
-          <td>Mag Atk</td>
-          <td>Mag Def</td>
-          <td>Speed</td>
+        <tr className={`text-center text-white ${bgColor}`}>
+          <td>{character.statDescriptions.health.name}</td>
+          <td>{character.statDescriptions.atk.name}</td>
+          <td>{character.statDescriptions.def.name}</td>
+          <td>{character.statDescriptions.magicAtk.name}</td>
+          <td>{character.statDescriptions.magicDef.name}</td>
+          <td>{character.statDescriptions.spd.name}</td>
         </tr>
       </thead>
       <tbody>

@@ -122,3 +122,25 @@
 table tr td{
   padding: 1rem 2rem 1rem 2rem;
 }
+
+progress::-webkit-progress-value, progress::-webkit-progress-bar{
+      border-radius: 7px;
+}
+
+.health::-webkit-progress-value{
+  background-color: rgb(56, 99, 56);
+}
+
+.health::-webkit-progress-bar{
+  background-color: rgb(118, 234, 118);
+
+}
+
+.mana::-webkit-progress-bar {
+  background-color: rgb(188, 188, 252);
+  border-radius: 7px;
+}
+
+.mana::-webkit-progress-value {
+  background-color: rgb(15, 15, 75);
+} 
