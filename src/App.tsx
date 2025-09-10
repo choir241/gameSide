@@ -2,7 +2,8 @@ import { Button } from "./components/ui/button";
 import { useState } from "react";
 import { character } from "./static/character";
 import enemyGenerator from "./static/enemyGenerator";
-import CharacterTable from "./components/characterTable";
+import CharacterTable from "./components/CharacterTable";
+import HealthAndManaBar from "./components/HealthAndManaBar";
 
 // 🌟 Key Features:
 // 🔁 Spaced Repetition Flashcards (Like Anki):
@@ -49,6 +50,8 @@ interface IStats {
   magicDef: number;
   health: number;
   mana: number;
+  critChance: number;
+  critDamage: number;
 }
 
 interface IHealthAndMana {
@@ -59,7 +62,11 @@ interface IHealthAndMana {
 export default function App() {
   const [bgColor, setBgColor] = useState("bg-[#000000]");
   const [currExp, setCurrExp] = useState(0);
-  const [skills, setSkills] = useState([]);
+  const [skills, setSkills] = useState([
+    character.skills[0],
+    character.skills[1],
+    character.skills[2],
+  ]);
   const [currFloor, setCurrFloor] = useState(1);
   const [currStats, setCurrStats] = useState<IStats>({
     health: character.baseStats.health,
@@ -69,6 +76,8 @@ export default function App() {
     magicAtk: character.baseStats.magicAtk,
     magicDef: character.baseStats.magicDef,
     mana: character.baseStats.mana,
+    critChance: character.baseStats.critChance,
+    critDamage: character.baseStats.critDamage,
   });
   const [healthAndMana, setHealthAndMana] = useState<IHealthAndMana>({
     mana: character.baseStats.mana,
@@ -80,14 +89,57 @@ export default function App() {
     enemyGenerator.generateEnemy(currFloor)
   );
   const [enemyHealthAndMana, setEnemyHealthAndMana] = useState<IHealthAndMana>({
-    mana: 100,
+    mana: currEnemy.stats.mana,
     health: currEnemy.stats.health,
   });
-  
+
   const currentLevel = character.getLevelFromExp(currExp);
   const nextLevelExp = character.getExpToLevel(currentLevel + 1);
 
-  function triggerSkill(skill) {}
+  function triggerSkill(skill) {
+    // Check for enough mana
+    if (healthAndMana.mana < skill.mpCost) {
+      alert("Not enough mana!");
+      return;
+    }
+
+    // Deduct mana
+    const newMana = healthAndMana.mana - skill.mpCost;
+    setHealthAndMana((prev) => ({ ...prev, mana: newMana }));
+    console.log(skill.description);
+    console.log(skill)
+    // Apply effects
+    if (skill.target === "single") {
+      let totalDamage = 0;
+
+      for (let effect of skill.effects) {
+        const statValue = currStats[effect.stat]; // e.g., atk, magicAtk
+        const damage = statValue + Math.round(statValue * (effect.amount / 100));
+        totalDamage += damage;
+        Math.round(totalDamage)
+      }
+
+      const newEnemyHealth = Math.max(
+        enemyHealthAndMana.health - totalDamage,
+        0
+      );
+
+      setEnemyHealthAndMana((prev) => ({ ...prev, health: newEnemyHealth }));
+    } else if (skill.target === "self") {
+      const newStats = { ...currStats };
+
+      for (let effect of skill.effects) {
+        const statValue = currStats[effect.stat];
+        const buff = statValue + Math.round(statValue * (effect.amount / 100));
+        newStats[effect.stat] = buff;
+      }
+
+      console.log(newStats)
+      setCurrStats(newStats);
+    }
+
+    // Add handling for other target types if needed later
+  }
 
   function triggerAttack() {
     const newCurrEnemyHealth =
@@ -111,18 +163,21 @@ export default function App() {
     <>
       <section>
         <span>
-          {currEnemy.name} Lv: {currEnemy.level} Mood: {currEnemy.mood}
+          {currEnemy.name} Lv: {currEnemy.level} Mood: {currEnemy.mood}{" "}
+          {currEnemy.archetype}
         </span>
-        <progress
+        <HealthAndManaBar
           className="health"
           max={currEnemy.stats.health}
           value={enemyHealthAndMana.health}
         />
-        <progress
+
+        <HealthAndManaBar
           className="mana"
-          value={healthAndMana.mana}
-          max={currStats.mana}
+          max={currEnemy.stats.mana}
+          value={enemyHealthAndMana.mana}
         />
+
         <CharacterTable
           bgColor={bgColor}
           characterStats={{
@@ -142,33 +197,35 @@ export default function App() {
           {character.baseStats.mood}
         </span>
         <section>
-          <progress
+          <HealthAndManaBar
             className="health"
             max={character.baseStats.health}
             value={healthAndMana.health}
           />
-          <progress
+          <HealthAndManaBar
             className="mana"
-            value={healthAndMana.mana}
             max={currStats.mana}
+            value={healthAndMana.mana}
           />
         </section>
         <CharacterTable
           bgColor={bgColor}
           characterStats={{
-            health: character.baseStats.health,
-            atk: character.baseStats.atk,
-            spd: character.baseStats.spd,
-            def: character.baseStats.def,
-            magicAtk: character.baseStats.magicAtk,
-            magicDef: character.baseStats.magicDef,
+            health: currStats.health,
+            atk: currStats.atk,
+            spd: currStats.spd,
+            def: currStats.def,
+            magicAtk: currStats.magicAtk,
+            magicDef: currStats.magicDef,
           }}
         />
 
         <Button onClick={() => triggerAttack()}>Attack</Button>
-        <Button>Skill 1</Button>
-        <Button>Skill 2</Button>
-        <Button>Skill 3</Button>
+        {skills.map((skill, i) => {
+          return (
+            <Button onClick={() => triggerSkill(skill)}>Skill {i + 1}</Button>
+          );
+        })}
       </section>
     </>
   );

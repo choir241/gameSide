@@ -18,22 +18,22 @@ const enemyGenerator = (() => {
   const archetypes = [
     {
       name: "Tank",
-      statMultipliers: { atk: 0.6, spd: 0.4, magicAtk: 0.3, def: 1.3, magicDef: 1.2, health: 1.5 },
+      statMultipliers: { atk: 0.6, spd: 0.4, magicAtk: 0.3, def: 1.3, magicDef: 1.2, health: 1.5, mana: 0.7 },
       abilities: ["Crushing Blow", "Iron Wall", "Shield Bash"],
     },
     {
       name: "Mage",
-      statMultipliers: { atk: 0.3, spd: 0.6, magicAtk: 1.4, def: 0.7, magicDef: 1.1, health: 0.8 },
+      statMultipliers: { atk: 0.3, spd: 0.6, magicAtk: 1.4, def: 0.7, magicDef: 1.1, health: 0.8, mana: 1.5 },
       abilities: ["Arcane Zap", "Mana Shield", "Echo Blast"],
     },
     {
       name: "Rogue",
-      statMultipliers: { atk: 1.0, spd: 1.3, magicAtk: 0.5, def: 0.6, magicDef: 0.6, health: 1.0 },
+      statMultipliers: { atk: 1.0, spd: 1.3, magicAtk: 0.5, def: 0.6, magicDef: 0.6, health: 1.0, mana: 0.5 },
       abilities: ["Savage Lunge", "Howl", "Quick Step"],
     },
     {
       name: "Hybrid",
-      statMultipliers: { atk: 0.8, spd: 0.9, magicAtk: 0.8, def: 0.9, magicDef: 0.9, health: 1.2 },
+      statMultipliers: { atk: 0.8, spd: 0.9, magicAtk: 0.8, def: 0.9, magicDef: 0.9, health: 1.2, mana: 1.0 },
       abilities: ["Resonant Strike", "Feedback Field", "Sonic Pulse"],
     }
   ];
@@ -56,7 +56,8 @@ const enemyGenerator = (() => {
     magicAtk: 60,
     def: 60,
     magicDef: 60,
-    health: 600
+    health: 600,
+    mana: 100,
   };
 
   // Generate a random number between min (inclusive) and max (exclusive)
@@ -88,7 +89,8 @@ const enemyGenerator = (() => {
       magicAtk: Math.round(baseStats.magicAtk * archetype.statMultipliers.magicAtk * scaleFactor),
       def: Math.round(baseStats.def * archetype.statMultipliers.def * scaleFactor),
       magicDef: Math.round(baseStats.magicDef * archetype.statMultipliers.magicDef * scaleFactor),
-      health: Math.round(baseStats.health * archetype.statMultipliers.health * scaleFactor)
+      health: Math.round(baseStats.health * archetype.statMultipliers.health * scaleFactor),
+      mana: Math.round(baseStats.mana * archetype.statMultipliers.mana * scaleFactor)
     };
 
     // Generate 2 random abilities from archetype abilities
